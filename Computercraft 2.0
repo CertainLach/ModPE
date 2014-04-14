@@ -1,0 +1,886 @@
+ccturtx = new Array(); //x integer
+ccturty = new Array(); //y integer
+ccturtz = new Array(); //z integer
+ccturtp = new Array(); //program text
+ccturtf = new Array(); //fuel integer
+ccturt1 = new Array(); //slot 1 id integer
+ccturt2 = new Array(); //slot 2 id integer
+ccturt3 = new Array(); //slot 3 id integer
+ccturt4 = new Array(); //slot 4 integer
+ccturt5 = new Array(); //slot 5 integer
+ccturt1d = new Array(); //slot 1 damage integer
+ccturt2d = new Array(); //slot 2 damage integer
+ccturt3d = new Array(); //slot 3 damage integer
+ccturt4d = new Array(); //slot 4 damage integer
+ccturt5d = new Array(); //slot 5 damage integer
+ccturt1c = new Array(); //slot 1 count integer
+ccturt2c = new Array(); //slot 2 count integer
+ccturt3c = new Array(); //slot 3 count integer
+ccturt4c = new Array(); //slot 4 count integer
+ccturt5c = new Array(); //slot 5 count integer
+ccturti = new Array(); //turtle id integer
+ccturts = new Array(); //slot integer
+ccturtc = null; //current turtle integer
+ccturtv = new Array(); //turtle style
+ccturtv[0] = "Creeplays,ThisIsCreeplays" //nicks of the modcreator
+ccturtv[1] = "Wirelless turtle"; //name
+ccturtv[2] = "stone_slab"; //texture n 1
+ccturtv[3] = "cauldron_top"; //texture n 2
+ccturtv[4] = 250; //id turtle block
+ccturtcount = 0; //total turtles in world
+ccturtcountmax = 10; //maximum turtles
+ccturtinit = false; //init flag
+ccturtsavetick = 160;
+ccturtnexttick = 35;
+ccturtaddons=new Array();
+var GUI;
+var menu;
+function destroyBlock(x, y, z, side) {
+        blockId = getTile(x, y, z);
+        if (blockId == ccturtv[4] || blockId == ccturtv[4] + 1 || blockId == ccturtv[4] + 2 || blockId == ccturtv[4] + 3) {
+                for (var ccturtsearch = 0; ccturtsearch < ccturtcountmax; ccturtsearch++) {
+                        if (ccturtx[ccturtsearch] == x && ccturty[ccturtsearch] == y && ccturtz[ccturtsearch] == z) {
+                                ccturtmessage("Destroyed turtle, id: " + ccturtsearch);
+                                ccturtx[ccturtsearch] = null;
+                                ccturty[ccturtsearch] = null;
+                                ccturtz[ccturtsearch] = null;
+                                ccturtf[ccturtsearch] = null;
+                                ccturtif[ccturtsearch] = null;
+                                //inventory drop
+                                Level.dropItem(x, y, z, 1, ccturtv[4], 1, 1);
+                                ccturtcount--;
+                                
+                                break;
+                        }
+                }
+        }
+}
+/*
+THIS IS VERY BAD FUCKING IDEA!!!
+function destroyBlock(x, y, z, side) {
+preventDefault();
+        blockId = getTile(x, y, z);
+        if (blockId == ccturtv[4] || blockId == ccturtv[4] + 1 || blockId == ccturtv[4] + 2 || blockId == ccturtv[4] + 3) {
+                for (var ccturtsearch = 0; ccturtsearch < ccturtcountmax; ccturtsearch++) {
+                        if (ccturtx[ccturtsearch] == x && ccturty[ccturtsearch] == y && ccturtz[ccturtsearch] == z) {
+                                ccturtmessage("Destroyed turtle, id: " + ccturtsearch);
+                                ccturtx[ccturtsearch] = null;
+                                ccturty[ccturtsearch] = null;
+                                ccturtz[ccturtsearch] = null;
+                                ccturtf[ccturtsearch] = null;
+                                ccturtif[ccturtsearch] = null;
+                                //inventory drop
+                                Level.dropItem(x, y, z, 1, ccturtv[4], 1, 1);
+                                ccturtcount--;
+                                
+                                break;
+                        }
+                }
+        }
+else
+{
+Level.dropItem(x, y, z, 1, blockId, Level.getData(x,y,z), 1);
+Level.destroyBlock(x,y,z);
+
+}
+}
+*/
+/*====================*/
+/*======Function======*/
+/*====================*/
+function about() {
+var nick=new Array();
+nick=ccturtv[0].split(',');
+var nickrand=random(0,1);
+nickrand=nick[nickrand];
+        ccturtmessage("§1ComputerCraft §2v1.3");
+        ccturtmessage("§1By §2"+nickrand+"§1, for §k4pda.ru");
+        ccturtmessage("§3Do not distribute!");
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function modTick() {
+        ccturtsavetick--;
+        if (ccturtsavetick == 0) {
+                savestate();
+                ccturtsavetick = 100;
+        }
+        ccturtnexttick--;
+        if (ccturtnexttick == 0) {
+                next();
+                ccturtnexttick = 35;
+        }
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function addPegLegToRenderer(renderer) {
+var s = renderer.getModel().getPart("body");
+//s.clear()
+//s.setTextureOffset(32, 16);
+//s.addBox(-3.0, 4.0, -1.5, 6 , 9, 3, 0);
+adden(s,1,4,3,12,1,-0.4,0.4)
+adden(s,-2,4,3,12,-1,-0.4,0.4)
+adden(s,1,2,3,12,1,-0.4,0.4)
+adden(s,-2,2,3,12,-1,-0.4,0.4)
+}
+
+
+
+
+function adden(s,x,y,z,l,a,b,c)
+{
+for(var i=0;i<=l;i++){
+s.setTextureOffset(0,26);
+s.addBox(x+i*a, y+i*b, z+i*c, 1, 1, 1);
+if(l%3==0)add2(s,x+i*a, y+i*b, z+i*c,i/3,a,-b*2,c)
+}
+}
+function add2(s,x,y,z,l,a,b,c)
+{
+for(var i=0;i<=l;i++){
+s.setTextureOffset(0,26);
+s.addBox(x+i*a, y+i*b, z+i*c, 1, 1, 1);
+}
+}
+function selectLevelHook() {
+if (Player.getName(getPlayerEnt())="Creeplays")
+{
+
+addPegLegToRenderer(Renderer.get(3)); //player
+addPegLegToRenderer(Renderer.get(16)); //player (multiplayer)}
+        newLevelgui();
+        loadstate();
+        if (!ccturtinit) {
+                Block.defineBlock(ccturtv[4] + 4, "Computer (Useless)", [[ccturtv[2], 0], [ccturtv[2], 0],
+   [ccturtv[2], 0], [ccturtv[2], 0],
+   [ccturtv[2], 0], [ccturtv[2], 0]]);
+				Item.addCraftRecipe(254, 1, 0, [1,0,1]);
+                //Item.setItemCategory(254,4,0);
+                Block.setDestroyTime(254, 1.5); //block init finished
+                Block.defineBlock(ccturtv[4] + 2, ccturtv[1], [[ccturtv[2], 0], [ccturtv[2], 0],
+   [ccturtv[3], 0], [ccturtv[2], 0],
+   [ccturtv[2], 0], [ccturtv[2], 0]]);
+                //ModPE.setItemCategory(ccturtv[4] + 2,1,1);
+                Block.setDestroyTime(ccturtv[4] + 2, 1.5); //block init finished
+                Block.defineBlock(ccturtv[4], ccturtv[1], [[ccturtv[2], 0], [ccturtv[2], 0],
+   [ccturtv[2], 0], [ccturtv[3], 0],
+   [ccturtv[2], 0], [ccturtv[2], 0]]);
+				Item.addCraftRecipe(ccturtv[4], 1, 0, [1,0,1,1,0,1]);
+               // Item.setItemCategory(ccturtv[4],4,0);
+                Block.setDestroyTime(ccturtv[4], 1.5); //block init finished
+                Block.defineBlock(ccturtv[4] + 3, ccturtv[1], [[ccturtv[2], 0], [ccturtv[2], 0],
+   [ccturtv[2], 0], [ccturtv[2], 0],
+   [ccturtv[3], 0], [ccturtv[2], 0]]);
+                //ModPE.setItemCategory(ccturtv[4] + 3,1,1);
+                Block.setDestroyTime(ccturtv[4] + 3, 1.5); //block init finished
+                Block.defineBlock(ccturtv[4] + 1, ccturtv[1], [[ccturtv[2], 0], [ccturtv[2], 0],
+   [ccturtv[2], 0], [ccturtv[2], 0],
+   [ccturtv[2], 0], [ccturtv[3], 0]]);
+                //ModPE.setItemCategory(ccturtv[4] + 1,4,0);
+                Block.setDestroyTime(ccturtv[4] + 1, 1.5); //block init finished
+
+                ccturtinit = !ccturtinit; //true or false switch
+        }
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function useItem(x, y, z, itemId, blockId, side) {
+        if (blockId == ccturtv[4] || blockId == ccturtv[4] + 1 || blockId == ccturtv[4] + 2 || blockId == ccturtv[4] + 3) {
+                for (var ccturtsearch = 0; ccturtsearch < ccturtcountmax; ccturtsearch++) {
+                        if (ccturtx[ccturtsearch] == x && ccturty[ccturtsearch] == y && ccturtz[ccturtsearch] == z) {
+                                if (ccturtsearch == ccturtc) {
+                                        if (itemId == 263 || itemId == "Other stuff") {
+                                                if (itemId == 263) {
+                                                        ccturtf[ccturtc] += 700;
+                                                        ccturtmessage("Fuel in turtle: " + ccturtf[ccturtc]);
+                                                }
+                                        }
+                                        else {
+                                                ccturtmessage("Turtle already selected!");
+                                        }
+                                }
+                                else {
+                                        ccturtmessage("Control on this turtle enabled, id: " + ccturtsearch);
+                                        ccturtc = ccturtsearch;
+                                        break;
+                                }
+                        }
+                }
+                preventDefault();
+        }
+        else {
+                if (side == 1) {
+                        if (itemId == ccturtv[4] || itemId == ccturtv[4] + 1 || itemId == ccturtv[4] + 2 || itemId == ccturtv[4] + 3) {
+                                if (ccturtcount + 1 > ccturtcountmax) {
+                                        preventDefault();
+                                        ccturtmessage("maximum turtles reached");
+                                }
+                                else {
+                                        var ccturtadd = 0;
+                                        while (ccturtx[ccturtadd] != null) {
+                                                ccturtadd++;
+                                        }
+                                        ccturtx[ccturtadd] = x;
+                                        ccturty[ccturtadd] = y + 1;
+                                        ccturtz[ccturtadd] = z;
+                                        ccturti[ccturtadd] = itemId;
+                                        ccturtf[ccturtadd] = 0;
+                                        ccturtcount++;
+                                        setTile(x, y + 1, z, ccturtv[4], 1);
+                                        ccturtmessage("Computerized success, id: " + ccturtadd);
+ccturt1[ccturtadd] = 0;
+ccturt2[ccturtadd] = 0;
+ccturt3[ccturtadd] = 0;
+ccturt4[ccturtadd] = 0;
+ccturt5[ccturtadd] = 0;
+ccturt1d[ccturtadd] = 0;
+ccturt2d[ccturtadd] = 0;
+ccturt3d[ccturtadd] = 0;
+ccturt4d[ccturtadd] = 0;
+ccturt5d[ccturtadd] = 0;
+ccturt1c[ccturtadd] = 0;
+ccturt2c[ccturtadd] = 0;
+ccturt3c[ccturtadd] = 0;
+ccturt4c[ccturtadd] = 0;
+ccturt5c[ccturtadd] = 0;
+ccturtadd = 0;
+                                }
+                        }
+
+
+                }
+				else
+		        {
+		        preventDefault();
+		        }
+        
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		}
+
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function ccturtmessage(text) {
+        clientMessage("§1[§2CC§1]§3:§5 " + text);
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+var Turtle = {
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+        Up: function () {
+		if(ccturtf[ccturtc]>15)
+		{
+                if (getTile(ccturtx[ccturtc], ccturty[ccturtc] + 1, ccturtz[ccturtc]) == 0) {
+                        setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc], 0);
+                        setTile(ccturtx[ccturtc], ccturty[ccturtc] + 1, ccturtz[ccturtc], ccturti[ccturtc]);
+                        ccturty[ccturtc]++;
+                }
+                else {
+                        ccturtmessage("Block prevent move");
+                }
+        }
+		else
+		{
+		ccturtmessage("Not enught fuel!");
+		}
+		},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+        Down: function () {
+				if(ccturtf[ccturtc]>15)
+		{
+                if (getTile(ccturtx[ccturtc], ccturty[ccturtc] - 1, ccturtz[ccturtc]) == 0) {
+                        setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc], 0);
+                        setTile(ccturtx[ccturtc], ccturty[ccturtc] - 1, ccturtz[ccturtc], ccturti[ccturtc]);
+                        ccturty[ccturtc]--;
+                }
+                else {
+                        ccturtmessage("Block prevent move");
+                }
+				}
+				else
+				{
+				ccturtmessage("Not enught fuel!")
+				}
+        },
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+        turnRight: function () {
+				if(ccturtf[ccturtc]>15)
+		{
+                ccturti[ccturtc]--;
+                if (ccturti[ccturtc] < ccturtv[4]) {
+                        ccturti[ccturtc] += 4;
+                }
+                setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc], ccturti[ccturtc]);
+				}
+				else
+				{
+				ccturtmessage("Not enught fuel!");
+				}
+        },
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+        turnLeft: function () {
+				if(ccturtf[ccturtc]>15)
+		{
+                ccturti[ccturtc]++;
+                if (ccturti[ccturtc] > ccturtv[4] + 3) {
+                        ccturti[ccturtc] -= 4;
+                }
+                setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc], ccturti[ccturtc]);
+        }
+		else
+		{
+		ccturtmessage("Not enught fuel!");
+		}
+		},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+        Forward: function () {		
+		if(ccturtf[ccturtc]>15)
+		{
+                if (ccturti[ccturtc] == ccturtv[4]) {
+                        if (getTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] + 1) == 0) {
+                                setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc], 0);
+                                setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] + 1, ccturti[ccturtc]);
+                                ccturtz[ccturtc]++;
+                        }
+                        else {
+                                ccturtmessage("Block prevent move");
+                        }
+                }
+                if (ccturti[ccturtc] == ccturtv[4] + 1) {
+                        if (getTile(ccturtx[ccturtc] + 1, ccturty[ccturtc], ccturtz[ccturtc]) == 0) {
+                                setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc], 0);
+                                setTile(ccturtx[ccturtc] + 1, ccturty[ccturtc], ccturtz[ccturtc], ccturti[ccturtc]);
+                                ccturtx[ccturtc]++;
+                        }
+                        else {
+                                ccturtmessage("Block prevent move");
+                        }
+                }
+                if (ccturti[ccturtc] == ccturtv[4] + 2) {
+                        if (getTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] - 1) == 0) {
+                                setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc], 0);
+                                setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] - 1, ccturti[ccturtc]);
+                                ccturtz[ccturtc]--;
+                        }
+                        else {
+                                ccturtmessage("Block prevent move");
+                        }
+                }
+                if (ccturti[ccturtc] == ccturtv[4] + 3) {
+                        if (getTile(ccturtx[ccturtc] - 1, ccturty[ccturtc], ccturtz[ccturtc]) == 0) {
+                                setTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc], 0);
+                                setTile(ccturtx[ccturtc] - 1, ccturty[ccturtc], ccturtz[ccturtc], ccturti[ccturtc]);
+                                ccturtx[ccturtc]--;
+                        }
+                        else {
+                                ccturtmessage("Block prevent move");
+                        }
+                }
+        }
+		else
+		{
+		ccturtmessage("Not enught fuel!");
+		}
+		},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+        dig: function () {
+				if(ccturtf[ccturtc]>20)
+		{
+                if (ccturti[ccturtc] == ccturtv[4]) {
+                        if (getTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] + 1) != 7) {
+                                var ccturtdrop = getTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] + 1);
+                                var ccturtdropdata = Level.getData(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] + 1);
+                                if (ccturtdrop != 0) {
+                                        destroyBlock(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] + 1);
+                                        Level.destroyBlock(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] + 1);
+                                        addtoturtinv(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] + 1, 1, ccturtdrop, 1, ccturtdropdata);
+                                }
+                                else {
+                                        ccturtmessage("Break the air?! Okay...");
+                                }
+                        }
+                        else {
+                                ccturtmessage("Unbreakable");
+                        }
+                }
+                if (ccturti[ccturtc] == ccturtv[4] + 1) {
+                        if (getTile(ccturtx[ccturtc] + 1, ccturty[ccturtc], ccturtz[ccturtc]) != 7) {
+                                var ccturtdrop = getTile(ccturtx[ccturtc] + 1, ccturty[ccturtc], ccturtz[ccturtc]);
+                                var ccturtdropdata = Level.getData(ccturtx[ccturtc] + 1, ccturty[ccturtc], ccturtz[ccturtc]);
+                                if (ccturtdrop != 0) {
+                                        destroyBlock(ccturtx[ccturtc] + 1, ccturty[ccturtc], ccturtz[ccturtc]);
+                                        Level.destroyBlock(ccturtx[ccturtc] + 1, ccturty[ccturtc], ccturtz[ccturtc]);
+                                        addtoturtinv(ccturtx[ccturtc] + 1, ccturty[ccturtc], ccturtz[ccturtc], 1, ccturtdrop, 1, ccturtdropdata);
+                                }
+                                else {
+                                        ccturtmessage("Break the air?! Okay...");
+                                }
+                        }
+                        else {
+                                ccturtmessage("Unbreakable");
+                        }
+                }
+                if (ccturti[ccturtc] == ccturtv[4] + 2) {
+                        if (getTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] - 1) != 7) {
+                                var ccturtdrop = getTile(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] - 1);
+                                var ccturtdropdata = Level.getData(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] - 1);
+                                if (ccturtdrop != 0) {
+                                        destroyBlock(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] - 1);
+                                        Level.destroyBlock(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] - 1);
+                                        addtoturtinv(ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc] - 1, 1, ccturtdrop, 1, ccturtdropdata);
+                                }
+                                else {
+                                        ccturtmessage("Break the air?! Okay...");
+                                }
+                        }
+                        else {
+                                ccturtmessage("Unbreakable");
+                        }
+                }
+                if (ccturti[ccturtc] == ccturtv[4] + 3) {
+                        if (getTile(ccturtx[ccturtc] - 1, ccturty[ccturtc], ccturtz[ccturtc]) != 7) {
+                                var ccturtdrop = getTile(ccturtx[ccturtc] - 1, ccturty[ccturtc], ccturtz[ccturtc]);
+                                var ccturtdropdata = Level.getData(ccturtx[ccturtc] - 1, ccturty[ccturtc], ccturtz[ccturtc]);
+                                if (ccturtdrop != 0) {
+                                        destroyBlock(ccturtx[ccturtc] - 1, ccturty[ccturtc], ccturtz[ccturtc]);
+                                        Level.destroyBlock(ccturtx[ccturtc] - 1, ccturty[ccturtc], ccturtz[ccturtc]);
+                                        addtoturtinv(ccturtx[ccturtc] - 1, ccturty[ccturtc], ccturtz[ccturtc], 1, ccturtdrop, 1, ccturtdropdata);
+                                }
+                                else {
+                                        ccturtmessage("Break the air?! Okay...");
+                                }
+                        }
+                        else {
+                                ccturtmessage("Unbreakable");
+                        }
+                }
+        }
+		else
+		{
+		ccturtmessage("Noot enught fuel!")
+		}
+		},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+};
+/*====================*/
+/*======Function======*/
+/*====================*/
+function newLevelgui() {
+        var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
+        ctx.runOnUiThread(new java.lang.Runnable({
+                run: function () {
+                        try {
+                                var layout = new android.widget.LinearLayout(ctx);
+                                layout.setOrientation(1);
+
+                                var menuBtn = new android.widget.Button(ctx);
+                                menuBtn.setText("CCMenu.");
+                                menuBtn.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                mainMenu();
+                                        }
+                                }));
+                                layout.addView(menuBtn);
+
+                                GUI = new android.widget.PopupWindow(layout, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget
+                                        .RelativeLayout.LayoutParams.WRAP_CONTENT);
+                                GUI.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+                                GUI.showAtLocation(ctx.getWindow()
+                                        .getDecorView(), android.view.Gravity.RIGHT | android.view.Gravity.BOTTOM, 0, 10);
+                        }
+                        catch (err) {
+                                print("An error occured: " + err);
+                        }
+                }
+        }));
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function mainMenu() {
+
+        var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
+        ctx.runOnUiThread(new java.lang.Runnable({
+                run: function () {
+                        try {
+                                var menuLayout = new android.widget.LinearLayout(ctx);
+                                var menuScroll = new android.widget.ScrollView(ctx);
+                                var menuLayout1 = new android.widget.LinearLayout(ctx);
+                                menuLayout.setOrientation(1);
+                                menuLayout1.setOrientation(1);
+
+                                menuScroll.addView(menuLayout);
+                                menuLayout1.addView(menuScroll);
+
+                                var button = new android.widget.Button(ctx);
+                                button.setText("Close");
+                                button.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                if (menu != null) {
+                                                        menu.dismiss();
+                                                        menu = null;
+                                                }
+                                        }
+                                }));
+                                menuLayout.addView(button);
+                                var commline = new android.widget.EditText(ctx);
+                                commline.setHint("Type a command (e.g TurtleForward())");
+                                commline.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
+                                // menuLayout.addView(commline);
+
+                                var buttonok = new android.widget.Button(ctx);
+                                buttonok.setText("Execute script");
+                                buttonok.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+
+                                        }
+                                }));
+                                menuLayout.addView(buttonok);
+
+                                var buttonab = new android.widget.Button(ctx);
+                                buttonab.setText("About computercraft");
+                                buttonab.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                about();
+                                        }
+                                }));
+                                menuLayout.addView(buttonab);
+                                var buttondig = new android.widget.Button(ctx);
+                                buttondig.setText("Dig block");
+                                buttondig.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                Turtle.dig();
+                                        }
+                                }));
+                                menuLayout.addView(buttondig);
+                                var buttonUp = new android.widget.Button(ctx);
+                                buttonUp.setText("Move up");
+                                buttonUp.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                Turtle.Up();
+                                        }
+                                }));
+                                menuLayout.addView(buttonUp);
+                                var buttondown = new android.widget.Button(ctx);
+                                buttondown.setText("Move down");
+                                buttondown.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                Turtle.Down();
+                                        }
+                                }));
+                                menuLayout.addView(buttondown);
+                                var buttonleft = new android.widget.Button(ctx);
+                                buttonleft.setText("Turn left");
+                                buttonleft.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                Turtle.turnLeft();
+                                        }
+                                }));
+                                menuLayout.addView(buttonleft);
+                                var buttonright = new android.widget.Button(ctx);
+                                buttonright.setText("Turn right");
+                                buttonright.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                Turtle.turnRight();
+                                        }
+                                }));
+                                menuLayout.addView(buttonright);
+                                var buttonfor = new android.widget.Button(ctx);
+                                buttonfor.setText("Move forward");
+                                buttonfor.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                Turtle.Forward();
+                       }
+                                }));
+                                menuLayout.addView(buttonfor);
+                                var buttoninv = new android.widget.Button(ctx);
+                                buttoninv.setText("Inventory");
+                                buttoninv.setOnClickListener(new android.view.View.OnClickListener({
+                                        onClick: function (viewarg) {
+                                                ccturtmessage("Slot 1: "+ccturt1+":"+ccturt1d+", count: "+ccturt1c+".");
+                                                ccturtmessage("Slot 2: "+ccturt2+":"+ccturt2d+", count: "+ccturt2c+".");
+                                                ccturtmessage("Slot 3: "+ccturt3+":"+ccturt3d+", count: "+ccturt3c+".");
+                                                ccturtmessage("Slot 4: "+ccturt4+":"+ccturt4d+", count: "+ccturt4c+".");
+                                                ccturtmessage("Slot 5: "+ccturt5+":"+ccturt5d+", count: "+ccturt5c+".");
+                                        }
+                                }));
+                                menuLayout.addView(buttoninv);
+                                //Tak daleye
+                                menu = new android.widget.PopupWindow(menuLayout1, ctx.getWindowManager()
+                                        .getDefaultDisplay()
+                                        .getWidth() / 2, ctx.getWindowManager()
+                                        .getDefaultDisplay()
+                                        .getHeight());
+                                menu.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK));
+                                menu.showAtLocation(ctx.getWindow()
+                                        .getDecorView(), android.view.Gravity.RIGHT | android.view.Gravity.TOP, 0, 0);
+                        }
+                        catch (error) {
+                                print("An error occured: " + error);
+                        }
+                }
+        }));
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function leaveGame() {
+        var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
+        ctx.runOnUiThread(new java.lang.Runnable({
+                run: function () {
+                        if (GUI != null) {
+                                GUI.dismiss();
+                                GUI = null;
+                        }
+                        if (menu != null) {
+                                menu.dismiss();
+                                menu = null;
+                        }
+                }
+        }));
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function loadstate() {
+        var dir = new java.io.File(android.os.Environment.getExternalStorageDirectory()
+                .getPath() + "/games/com.mojang/minecraftWorlds/" + Level.getWorldDir() + "/ComputerCraft/state/");
+        dir.mkdirs();
+        var file = new java.io.File(android.os.Environment.getExternalStorageDirectory()
+                .getPath() + "/games/com.mojang/minecraftWorlds/" + Level.getWorldDir() + "/ComputerCraft/state/state.dat");
+        var scanner = new java.util.Scanner(file);
+        var toload = scanner.next();
+        var toloada = (toload + "Xr");
+        toload = encrypt(toloada, "dec");
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function savestate() {
+        var state = [ccturtc, ccturtx.join("ð"), ccturty.join("ð"), ccturtz.join("ð")];
+        var tosave = state.join("ß");
+        tosave = encrypt(tosave, "enc");
+        var dir = new java.io.File(android.os.Environment.getExternalStorageDirectory()
+                .getPath() + "/games/com.mojang/minecraftWorlds/" + Level.getWorldDir() + "/ComputerCraft/state/");
+        dir.mkdirs();
+        file = new java.io.File(android.os.Environment.getExternalStorageDirectory()
+                .getPath() + "/games/com.mojang/minecraftWorlds/" + Level.getWorldDir() + "/ComputerCraft/state/state.dat");
+        file.delete();
+        savewrite = new java.io.PrintWriter(file);
+        savewrite.print(tosave);
+        savewrite.close();
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function next() {
+
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function encrypt(b_x, b_n) {
+        var b_alf =
+                'АжЩЮюУеvИ5ЭQDIAðПC3эСiRХгTlß4HЫнaШЯаqЗлKя2m6kзДкJYЧu18MgpZЦтБР7мбV0tьКоОLBЛ9ceфhёPМsnыNyшФщЬXrSГEусWbцdдfЖВFjпGЕвoхТUwчиНOxрz "@$&№,.;:?!|/\~*+-)(}{<>[]#%&^=';
+        var b_result = '';
+        if (b_n == "enc") {
+                for (i = 0; i < b_x.length; i++) {
+                        b_pos = b_alf.lastIndexOf(b_x.charAt(i));
+                        b_char1 = b_alf.charAt(b_pos - 2);
+                        b_char2 = b_alf.charAt(b_pos - 1);
+                        b_result = b_result + b_char1 + b_char2;
+                }
+        }
+        if (b_n == "dec") {
+                for (i = 0; i < b_x.length; i = i + 2) {
+                        b_pos = b_alf.indexOf(b_x.charAt(i));
+                        b_result = b_result + b_alf.charAt(b_pos + 2);
+                }
+        }
+        return b_result;
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function dropdict(item)
+{
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function addtoturtinv(x,y,z,easteregg,item,count,data)
+{
+if(ccturt1[ccturtc]==item||ccturt1[ccturtc]==0)
+{
+if(ccturt1d[ccturtc]==data||ccturt1d[ccturtc]>-1)
+{
+if(ccturt1c[ccturtc]+count<65)
+{
+ccturt1[ccturtc]=item;
+ccturt1d[ccturtc]=data;
+ccturt1c[ccturtc]=ccturt1c+count
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+if(ccturt2[ccturtc]==item||ccturt2[ccturtc]==0)
+{
+if(ccturt2d[ccturtc]==data||ccturt2d[ccturtc]>-1)
+{
+if(ccturt2c[ccturtc]-(-count)<65)
+{
+ccturt2[ccturtc]=item;
+ccturt2d[ccturtc]=data;
+ccturt2c[ccturtc]=ccturt1c-(-count);
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+if(ccturt3[ccturtc]==item||ccturt3[ccturtc]==0)
+{
+if(ccturt3d[ccturtc]==data||ccturt3d[ccturtc]>-1)
+{
+if(ccturt3c[ccturtc]-(-count)<65)
+{
+ccturt3[ccturtc]=item;
+ccturt3d[ccturtc]=data;
+ccturt3c[ccturtc]=ccturt1c-(-count);
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+if(ccturt4[ccturtc]==item||ccturt4[ccturtc]==0)
+{
+if(ccturt4d[ccturtc]==data||ccturt4d[ccturtc]>-1)
+{
+if(ccturt4c[ccturtc]-(-count)<65)
+{
+ccturt4[ccturtc]=item;
+ccturt4d[ccturtc]=data;
+ccturt4c[ccturtc]=ccturt1c-(-count);
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+if(ccturt5[ccturtc]==item||ccturt5[ccturtc]==0)
+{
+if(ccturt5d[ccturtc]==data||ccturt5d[ccturtc]>-1)
+{
+if(ccturt5c[ccturtc]-(-count)<65)
+{
+ccturt5[ccturtc]=item;
+ccturt5d[ccturtc]=data;
+ccturt5c[ccturtc]=ccturt1c-(-count);
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+}
+}
+}
+}
+
+var addons={
+reload:function(){
+
+},
+calladdonfunc:function(func){
+
+}
+};
+
+
+
+
+
+
+
+
+
+
+
