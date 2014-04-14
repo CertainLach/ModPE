@@ -115,41 +115,8 @@ function modTick() {
 /*====================*/
 /*======Function======*/
 /*====================*/
-function addPegLegToRenderer(renderer) {
-var s = renderer.getModel().getPart("body");
-//s.clear()
-//s.setTextureOffset(32, 16);
-//s.addBox(-3.0, 4.0, -1.5, 6 , 9, 3, 0);
-adden(s,1,4,3,12,1,-0.4,0.4)
-adden(s,-2,4,3,12,-1,-0.4,0.4)
-adden(s,1,2,3,12,1,-0.4,0.4)
-adden(s,-2,2,3,12,-1,-0.4,0.4)
-}
-
-
-
-
-function adden(s,x,y,z,l,a,b,c)
+function newLevel()
 {
-for(var i=0;i<=l;i++){
-s.setTextureOffset(0,26);
-s.addBox(x+i*a, y+i*b, z+i*c, 1, 1, 1);
-if(l%3==0)add2(s,x+i*a, y+i*b, z+i*c,i/3,a,-b*2,c)
-}
-}
-function add2(s,x,y,z,l,a,b,c)
-{
-for(var i=0;i<=l;i++){
-s.setTextureOffset(0,26);
-s.addBox(x+i*a, y+i*b, z+i*c, 1, 1, 1);
-}
-}
-function selectLevelHook() {
-if (Player.getName(getPlayerEnt())="Creeplays")
-{
-
-addPegLegToRenderer(Renderer.get(3)); //player
-addPegLegToRenderer(Renderer.get(16)); //player (multiplayer)}
         newLevelgui();
         loadstate();
         if (!ccturtinit) {
