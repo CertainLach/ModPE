@@ -1,0 +1,1320 @@
+//Creeplay's modpack
+//TMM Universal PE
+//toomuchminecraft.no-ip.biz
+//mods (like an PC):
+//ComputerCraft, ModularPowersuits(+addons), ThinkersConstruct, PortalGun, GravityGun. 
+//Uses filelib v 1.31 (by RusJJ (4pda.ru))
+//Uses parts of creecoder (javascript obfuscator by me)
+//Uses mods idea (code by me)
+//Uses timer API
+versions = new Array(); //versions of mods
+ccturtx = new Array(); //x integer
+ccturty = new Array(); //y integer
+ccturtz = new Array(); //z integer
+ccturtp = new Array(); //program text
+ccturtf = new Array(); //fuel integer
+ccturt1 = new Array(); //slot 1 id integer
+ccturt2 = new Array(); //slot 2 id integer
+ccturt3 = new Array(); //slot 3 id integer
+ccturt4 = new Array(); //slot 4 integer
+ccturt5 = new Array(); //slot 5 integer
+ccturt1d = new Array(); //slot 1 damage integer
+ccturt2d = new Array(); //slot 2 damage integer
+ccturt3d = new Array(); //slot 3 damage integer
+ccturt4d = new Array(); //slot 4 damage integer
+ccturt5d = new Array(); //slot 5 damage integer
+ccturt1c = new Array(); //slot 1 count integer
+ccturt2c = new Array(); //slot 2 count integer
+ccturt3c = new Array(); //slot 3 count integer
+ccturt4c = new Array(); //slot 4 count integer
+ccturt5c = new Array(); //slot 5 count integer
+ccturti = new Array(); //turtle id integer
+ccturts = new Array(); //slot integer
+ccturtc = null; //current turtle integer
+ccturtv = new Array(); //turtle style
+ccturtv[0] = "Creeplays,ThisIsCreeplays" //nicks of the modcreator
+ccturtv[1] = "Wirelless turtle"; //name
+ccturtv[2] = "stone_slab"; //texture n 1
+ccturtv[3] = "cauldron_top"; //texture n 2
+ccturtv[4] = 250; //id turtle block
+ccturtcount = 0; //total turtles in world
+ccturtcountmax = 100; //maximum turtles
+ccturtinit = false; //init flag
+ccturtsavetick = 160;
+ccturtnexttick = 35;
+ccturtaddons = new Array();
+cccameraent=null;
+img=" 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 ";
+var menu;function modTick()
+{
+time_runTimers();
+ccmodTick();
+}
+function destroyBlock(x, y, z, side)
+{
+ccdestroyBlock(x, y, z, side);
+}
+function selectLevelHook()
+{
+ccselectLevelHook();
+}
+function useItem(x, y, z, itemId, blockId, side)
+{
+ccuseItem(x, y, z, itemId, blockId, side);
+}
+function leaveGame()
+{
+ccleaveGame();
+}
+
+
+
+
+
+
+function ccdestroyBlock(x, y, z, side)
+{
+blockId = getTile(x, y, z);
+if (blockId == ccturtv[4] || blockId == ccturtv[4] + 1 || blockId == ccturtv[4] + 2 || blockId == ccturtv[4] + 3)
+{
+for (var ccturtsearch = 0; ccturtsearch < ccturtcountmax; ccturtsearch++)
+{
+if (ccturtx[ccturtsearch] == x && ccturty[ccturtsearch] == y && ccturtz[ccturtsearch] == z)
+{
+ccturtmessage("Destroyed turtle, id: " + ccturtsearch);
+ccturtx[ccturtsearch] = null;
+ccturty[ccturtsearch] = null;
+ccturtz[ccturtsearch] = null;
+ccturtf[ccturtsearch] = null;
+//inventory drop
+Level.dropItem(x, y, z, 1, ccturtv[4], 1, 1);
+ccturtcount--;
+break;
+}
+}}
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function about()
+{
+var nick = new Array();
+nick = ccturtv[0].split(',');
+var nickrand = random(0, 1);
+nickrand = nick[nickrand];
+ccturtmessage("§1ComputerCraft §2v1.3");
+ccturtmessage("§1By §2" + nickrand + "§1, for §k4pda.ru");
+ccturtmessage("§3Do not distribute!");
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function ccmodTick()
+{
+setVelX(cccameraent, 0);
+setVelY(cccameraent, 0);
+setVelZ(cccameraent, 0);
+setPosition(cccameraent, ccturtx[ccturtc], ccturty[ccturtc], ccturtz[ccturtc]);
+Entity.setHealth(cccameraent, 345567890);
+Entity.setRenderType(cccameraent, 0);
+//Entity.setRot(cccameraent, getYaw() , getPitch());
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function ccselectLevelHook()
+{
+newLevelgui();
+loadstate();
+if (!ccturtinit)
+{
+Block.defineBlock(ccturtv[4] + 4, "Computer", [[ccturtv[2], 0], [ccturtv[2], 0],
+[ccturtv[2], 0], [ccturtv[2], 0],
+[ccturtv[2], 0], [ccturtv[2], 0]]);
+Item.addCraftRecipe(ccturtv[4] + 4, 1, 0, [1, 7, 0, 102, 1, 0, 331, 1, 0]);
+Item.setCategory(ccturtv[4] + 4,8,0);
+Block.setDestroyTime(ccturtv[4] + 4, 1.5); //block init finished
+Block.defineBlock(ccturtv[4] + 2, ccturtv[1], [[ccturtv[2], 0], [ccturtv[2], 0],
+[ccturtv[3], 0], [ccturtv[2], 0],
+[ccturtv[2], 0], [ccturtv[2], 0]]);
+Item.setCategory(ccturtv[4] + 2,8,0);
+Block.setDestroyTime(ccturtv[4] + 2, 1.5); //block init finished
+Block.defineBlock(ccturtv[4], ccturtv[1], [[ccturtv[2], 0], [ccturtv[2], 0],
+[ccturtv[2], 0], [ccturtv[3], 0],
+[ccturtv[2], 0], [ccturtv[2], 0]]);
+Item.addCraftRecipe(ccturtv[4], 1, 0, [ccturtv[4] + 4, 1, 0, 265, 1, 0, 54, 1, 0]);
+Item.setCategory(ccturtv[4],8,0);
+Block.setDestroyTime(ccturtv[4], 1.5); //block init finished
+Block.defineBlock(ccturtv[4] + 3, ccturtv[1], [[ccturtv[2], 0], [ccturtv[2], 0],
+[ccturtv[2], 0], [ccturtv[2], 0],
+[ccturtv[3], 0], [ccturtv[2], 0]]);
+Item.setCategory(ccturtv[4] + 3,8,0);
+Block.setDestroyTime(ccturtv[4] + 3, 1.5); //block init finished
+Block.defineBlock(ccturtv[4] + 1, ccturtv[1], [[ccturtv[2], 0], [ccturtv[2], 0],
+[ccturtv[2], 0], [ccturtv[2], 0],
+[ccturtv[2], 0], [ccturtv[3], 0]]);
+Item.setCategory(ccturtv[4] + 1,8,0);
+Block.setDestroyTime(ccturtv[4] + 1, 1.5); //block init finished
+ccturtinit = !ccturtinit; //true or false switch
+}
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function ccuseItem(x, y, z, itemId, blockId, side)
+{
+if (blockId == ccturtv[4] || blockId == ccturtv[4] + 1 || blockId == ccturtv[4] + 2 || blockId == ccturtv[4] + 3)
+{
+for (var ccturtsearch = 0; ccturtsearch < ccturtcountmax; ccturtsearch++)
+{
+if (ccturtx[ccturtsearch] == x && ccturty[ccturtsearch] == y && ccturtz[ccturtsearch] == z)
+{
+if (ccturtsearch == ccturtc)
+{
+if (itemId == 263 || itemId == "Other stuff")
+{
+if (itemId == 263)
+{
+ccturtf[ccturtc] += 700;
+ccturtmessage("Fuel in turtle: " + ccturtf[ccturtc]);
+}
+}
+else
+{
+ccturtmessage("Turtle already selected!");
+}
+}
+else
+{
+ccturtmessage("Control on this turtle enabled, id: " + ccturtsearch);
+ccturtc = ccturtsearch;
+break;
+}
+}
+}
+preventDefault();
+}
+else
+{
+if (side == 1)
+{
+if (itemId == ccturtv[4] || itemId == ccturtv[4] + 1 || itemId == ccturtv[4] + 2 || itemId == ccturtv[4] + 3)
+{
+if (ccturtcount + 1 > ccturtcountmax)
+{
+preventDefault();
+ccturtmessage("maximum turtles reached");
+}
+else
+{
+var ccturtadd = 0;
+while (ccturtx[ccturtadd] != null)
+{
+ccturtadd++;
+}
+ccturtx[ccturtadd] = x;
+ccturty[ccturtadd] = y + 1;
+ccturtz[ccturtadd] = z;
+ccturti[ccturtadd] = itemId;
+ccturtf[ccturtadd] = 0;
+ccturtcount++;
+setTile(x, y + 1, z, ccturtv[4], 1);
+ccturtmessage("Computerized success, id: " + ccturtadd);
+ccturt1[ccturtadd] = 0;
+ccturt2[ccturtadd] = 0;
+ccturt3[ccturtadd] = 0;
+ccturt4[ccturtadd] = 0;
+ccturt5[ccturtadd] = 0;
+ccturt1d[ccturtadd] = 0;
+ccturt2d[ccturtadd] = 0;
+ccturt3d[ccturtadd] = 0;
+ccturt4d[ccturtadd] = 0;
+ccturt5d[ccturtadd] = 0;
+ccturt1c[ccturtadd] = 0;
+ccturt2c[ccturtadd] = 0;
+ccturt3c[ccturtadd] = 0;
+ccturt4c[ccturtadd] = 0;
+ccturt5c[ccturtadd] = 0;
+ccturtadd = 0;
+}
+}
+}
+else
+{
+preventDefault();
+}
+}
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function ccturtmessage(text)
+{
+clientMessage("§1[§2CC§1]§3:§5 " + text);
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+var Turtle = {
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+Up: function (id)
+{
+if (id==null||id==undefined||id=='')
+{
+id=ccturtc;
+}
+if (ccturtf[id] > 15)
+{
+if (getTile(ccturtx[id], ccturty[id] + 1, ccturtz[id]) == 0)
+{
+setTile(ccturtx[id], ccturty[id], ccturtz[id], 0);
+setTile(ccturtx[id], ccturty[id] + 1, ccturtz[id], ccturti[id]);
+ccturty[id]++;
+}
+else
+{
+ccturtmessage("Block prevent move");
+}
+}
+else
+{
+ccturtmessage("Not enught fuel!");
+}
+
+
+},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+Down: function (id)
+{
+if (id==null||id==undefined||id=='')
+{
+id=ccturtc;
+}
+if (ccturtf[id] > 15)
+{
+if (getTile(ccturtx[id], ccturty[id] - 1, ccturtz[id]) == 0)
+{
+setTile(ccturtx[id], ccturty[id], ccturtz[id], 0);
+setTile(ccturtx[id], ccturty[id] - 1, ccturtz[id], ccturti[id]);
+ccturty[id]--;
+}
+else
+{
+ccturtmessage("Block prevent move");
+}
+}
+else
+{
+ccturtmessage("Not enught fuel!")
+}
+
+
+},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+turnRight: function (id)
+{
+if (id==null||id==undefined||id=='')
+{
+id=ccturtc;
+}
+if (ccturtf[id] > 15)
+{
+ccturti[id]--;
+if (ccturti[id] < ccturtv[4])
+{
+ccturti[id] += 4;
+}
+setTile(ccturtx[id], ccturty[id], ccturtz[id], ccturti[id]);
+}
+else
+{
+ccturtmessage("Not enught fuel!");
+}
+
+
+},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+turnLeft: function (id)
+{
+if (id==null||id==undefined||id=='')
+{
+id=ccturtc;
+}
+if (ccturtf[id] > 15)
+{
+ccturti[id]++;
+if (ccturti[id] > ccturtv[4] + 3)
+{
+ccturti[id] -= 4;
+}
+setTile(ccturtx[id], ccturty[id], ccturtz[id], ccturti[id]);
+}
+else
+{
+ccturtmessage("Not enught fuel!");
+}
+
+
+},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+Forward: function (id)
+{
+if (id==null||id==undefined||id=='')
+{
+id=ccturtc;
+}
+if (ccturtf[id] > 15)
+{
+if (ccturti[id] == ccturtv[4])
+{
+if (getTile(ccturtx[id], ccturty[id], ccturtz[id] + 1) == 0)
+{
+setTile(ccturtx[id], ccturty[id], ccturtz[id], 0);
+setTile(ccturtx[id], ccturty[id], ccturtz[id] + 1, ccturti[id]);
+ccturtz[id]++;
+}
+else
+{
+ccturtmessage("Block prevent move");
+}
+}
+if (ccturti[id] == ccturtv[4] + 1)
+{
+if (getTile(ccturtx[id] + 1, ccturty[id], ccturtz[id]) == 0)
+{
+setTile(ccturtx[id], ccturty[id], ccturtz[id], 0);
+setTile(ccturtx[id] + 1, ccturty[id], ccturtz[id], ccturti[id]);
+ccturtx[id]++;
+}
+else
+{
+ccturtmessage("Block prevent move");
+}
+}
+if (ccturti[id] == ccturtv[4] + 2)
+{
+if (getTile(ccturtx[id], ccturty[id], ccturtz[id] - 1) == 0)
+{
+setTile(ccturtx[id], ccturty[id], ccturtz[id], 0);
+setTile(ccturtx[id], ccturty[id], ccturtz[id] - 1, ccturti[id]);
+ccturtz[id]--;
+}
+else
+{
+ccturtmessage("Block prevent move");
+}
+}
+if (ccturti[id] == ccturtv[4] + 3)
+{
+if (getTile(ccturtx[id] - 1, ccturty[id], ccturtz[id]) == 0)
+{
+setTile(ccturtx[id], ccturty[id], ccturtz[id], 0);
+setTile(ccturtx[id] - 1, ccturty[id], ccturtz[id], ccturti[id]);
+ccturtx[id]--;
+}
+else
+{
+ccturtmessage("Block prevent move");
+}
+}
+}
+else
+{
+ccturtmessage("Not enught fuel!");
+}
+
+
+},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+dig: function (id)
+{
+if (id==null||id==undefined||id=='')
+{
+id=ccturtc;
+}
+if (ccturtf[id] > 20)
+{
+if (ccturti[id] == ccturtv[4])
+{
+if (getTile(ccturtx[id], ccturty[id], ccturtz[id] + 1) != 7)
+{
+var ccturtdrop = getTile(ccturtx[id], ccturty[id], ccturtz[id] + 1);
+var ccturtdropdata = Level.getData(ccturtx[id], ccturty[id], ccturtz[id] + 1);
+if (ccturtdrop != 0)
+{
+destroyBlock(ccturtx[id], ccturty[id], ccturtz[id] + 1);
+Level.destroyBlock(ccturtx[id], ccturty[id], ccturtz[id] + 1);
+addtoturtinv(ccturtx[id], ccturty[id], ccturtz[id] + 1, 1, ccturtdrop, 1, ccturtdropdata);
+}
+else
+{
+ccturtmessage("Break the air?! Okay...");
+}
+}
+else
+{
+ccturtmessage("Unbreakable");
+}
+}
+if (ccturti[id] == ccturtv[4] + 1)
+{
+if (getTile(ccturtx[id] + 1, ccturty[id], ccturtz[id]) != 7)
+{
+var ccturtdrop = getTile(ccturtx[id] + 1, ccturty[id], ccturtz[id]);
+var ccturtdropdata = Level.getData(ccturtx[id] + 1, ccturty[id], ccturtz[id]);
+if (ccturtdrop != 0)
+{
+destroyBlock(ccturtx[id] + 1, ccturty[id], ccturtz[id]);
+Level.destroyBlock(ccturtx[id] + 1, ccturty[id], ccturtz[id]);
+addtoturtinv(ccturtx[id] + 1, ccturty[id], ccturtz[id], 1, ccturtdrop, 1, ccturtdropdata);
+}
+else
+{
+ccturtmessage("Break the air?! Okay...");
+}
+}
+else
+{
+ccturtmessage("Unbreakable");
+}
+}
+if (ccturti[id] == ccturtv[4] + 2)
+{
+if (getTile(ccturtx[id], ccturty[id], ccturtz[id] - 1) != 7)
+{
+var ccturtdrop = getTile(ccturtx[id], ccturty[id], ccturtz[id] - 1);
+var ccturtdropdata = Level.getData(ccturtx[id], ccturty[id], ccturtz[id] - 1);
+if (ccturtdrop != 0)
+{
+destroyBlock(ccturtx[id], ccturty[id], ccturtz[id] - 1);
+Level.destroyBlock(ccturtx[id], ccturty[id], ccturtz[id] - 1);
+addtoturtinv(ccturtx[id], ccturty[id], ccturtz[id] - 1, 1, ccturtdrop, 1, ccturtdropdata);
+}
+else
+{
+ccturtmessage("Break the air?! Okay...");
+}
+}
+else
+{
+ccturtmessage("Unbreakable");
+}
+}
+if (ccturti[id] == ccturtv[4] + 3)
+{
+if (getTile(ccturtx[id] - 1, ccturty[id], ccturtz[id]) != 7)
+{
+var ccturtdrop = getTile(ccturtx[id] - 1, ccturty[id], ccturtz[id]);
+var ccturtdropdata = Level.getData(ccturtx[id] - 1, ccturty[id], ccturtz[id]);
+if (ccturtdrop != 0)
+{
+destroyBlock(ccturtx[id] - 1, ccturty[id], ccturtz[id]);
+Level.destroyBlock(ccturtx[id] - 1, ccturty[id], ccturtz[id]);
+addtoturtinv(ccturtx[id] - 1, ccturty[id], ccturtz[id], 1, ccturtdrop, 1, ccturtdropdata);
+}
+else
+{
+ccturtmessage("Break the air?! Okay...");
+}
+}
+else
+{
+ccturtmessage("Unbreakable");
+}
+}
+}
+else
+{
+ccturtmessage("Not enught fuel!")
+}
+
+
+},
+/*==================*/
+/*===Sub Function===*/
+/*==================*/
+};
+/*====================*/
+/*======Function======*/
+/*====================*/
+function newLevelgui()
+{
+var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
+ctx.runOnUiThread(new java.lang.Runnable(
+{
+run: function ()
+{
+try
+{
+var layout2 = new android.widget.LinearLayout(ctx);
+layout2.setOrientation(0);
+
+var img2 = android.util.Base64.decode(img, 0); 
+var menuBtn3 = new android.widget.ImageView(ctx);
+menuBtn3.setImageBitmap(android.graphics.BitmapFactory.decodeByteArray(img2, 0, img2.length));
+menuBtn3.setOnClickListener(new android.view.View.OnClickListener({
+onClick: function(viewarg){
+starterUI.dismiss();
+starterUI = null;
+} }));
+layout2.addView(menuBtn3);
+starterUI = new android.widget.PopupWindow(layout2, dip2px(ctx, 50), dip2px(ctx, 50));
+starterUI.showAtLocation(ctx.getWindow().getDecorView(), android.view.Gravity.LEFT | android.view.Gravity.TOP, ctx.getScreenWidth()/2-24 , ctx.getScreenHeight()/2-24 );
+
+var layout = new android.widget.LinearLayout(ctx);
+layout.setOrientation(0);
+var menuBtn = new android.widget.Button(ctx);
+menuBtn.setText("CC");
+menuBtn.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+mainMenu("0");
+}
+}));
+layout.addView(menuBtn);
+var menuBtn2 = new android.widget.Button(ctx);
+menuBtn2.setText("TMI");
+menuBtn2.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+mainMenu2("main");
+}
+}));
+layout.addView(menuBtn2);
+GUI = new android.widget.PopupWindow(layout, android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT, android.widget
+.RelativeLayout.LayoutParams.WRAP_CONTENT);
+GUI.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+GUI.showAtLocation(ctx.getWindow()
+.getDecorView(), android.view.Gravity.RIGHT | android.view.Gravity.BOTTOM, 0, 0);
+}
+catch (err)
+{
+print("An error occured: " + err);
+}
+}
+}));
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function mainMenu(id)
+{
+var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
+ctx.runOnUiThread(new java.lang.Runnable(
+{
+run: function ()
+{
+try
+{
+var menuLayout = new android.widget.LinearLayout(ctx);
+var menuScroll = new android.widget.ScrollView(ctx);
+var menuLayout1 = new android.widget.LinearLayout(ctx);
+menuLayout.setOrientation(1);
+menuLayout1.setOrientation(1);
+menuScroll.addView(menuLayout);
+menuLayout1.addView(menuScroll);
+var button = new android.widget.Button(ctx);
+button.setText("Close");
+button.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+if (menu != null)
+{
+menu.dismiss();
+menu = null;
+}
+}
+}));
+menuLayout.addView(button);
+if(id=="0"){
+var buttonmov = new android.widget.Button(ctx);
+buttonmov.setText("Move");
+buttonmov.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+
+menu.dismiss();
+menu = null;
+mainMenu(2);
+}
+}));
+menuLayout.addView(buttonmov);
+
+var buttonok = new android.widget.Button(ctx);
+buttonok.setText("Execute script");
+buttonok.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg) {}
+}));
+menuLayout.addView(buttonok);
+var buttonab = new android.widget.Button(ctx);
+buttonab.setText("About computercraft");
+buttonab.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+about();
+}
+}));
+menuLayout.addView(buttonab);
+
+var buttoninv = new android.widget.Button(ctx);
+buttoninv.setText("Inventory");
+buttoninv.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{if(ccturtc!=null)
+{
+ccturtmessage("Slot 1: " + ccturt1[ccturtc] + ":" + ccturt1d[ccturtc] + ", count: " + ccturt1c[ccturtc] + ".");
+ccturtmessage("Slot 2: " + ccturt2[ccturtc] + ":" + ccturt2d[ccturtc] + ", count: " + ccturt2c[ccturtc] + ".");
+ccturtmessage("Slot 3: " + ccturt3[ccturtc] + ":" + ccturt3d[ccturtc] + ", count: " + ccturt3c[ccturtc] + ".");
+ccturtmessage("Slot 4: " + ccturt4[ccturtc] + ":" + ccturt4d[ccturtc] + ", count: " + ccturt4c[ccturtc] + ".");
+ccturtmessage("Slot 5: " + ccturt5[ccturtc] + ":" + ccturt5d[ccturtc] + ", count: " + ccturt5c[ccturtc] + ".");
+}else
+{ccturtmessage("No turtle selected!")}}
+}));
+menuLayout.addView(buttoninv);
+var buttonsel = new android.widget.Button(ctx);
+buttonsel.setText("Select");
+buttonsel.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+
+menu.dismiss();
+menu = null;
+mainMenu(1);
+}
+}));
+menuLayout.addView(buttonsel);
+if(cccameraent==null)
+{
+var buttoncam = new android.widget.Button(ctx);
+buttoncam.setText("Camera: off");
+buttoncam.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+if (ccturtx[ccturtc]!=undefined|| ccturtx[i]!=null )
+{
+menu.dismiss();
+menu = null;
+cccameraent=Level.spawnMob(ccturtx[ccturtc],ccturty[ccturtc]+1,ccturtz[ccturtc],11,"/mob/cow.png");
+ModPE.setCamera(cccameraent);
+}
+}
+}));
+menuLayout.addView(buttoncam);
+}
+else
+{
+var buttoncam = new android.widget.Button(ctx);
+buttoncam.setText("Camera: on");
+buttoncam.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+if (ccturtx[ccturtc]!=undefined|| ccturtx[i]!=null )
+{
+menu.dismiss();
+menu = null;
+Entity.remove(cccameraent);
+cccameraent=null;
+ModPE.setCamera( getPlayerEnt() );
+}
+}
+}));
+menuLayout.addView(buttoncam);
+
+}
+
+
+
+
+}
+if(id=="1")
+{
+for (var i = 0; i < ccturtcountmax; i++)
+{
+if (ccturtx[i]!=undefined|| ccturtx[i]!=null )
+{eval("var buttona" + i + " = new android.widget.Button(ctx)");
+eval("buttona" + i+ ".setText('id:" + i + "')");
+eval("buttona" + i + ".setOnClickListener(new android.view.View.OnClickListener({onClick: function (viewarg){ ccturtc="+i+" }}));menuLayout.addView(buttona" + i + ");");
+}}
+
+}
+if(id=="2")
+{
+var buttondig = new android.widget.Button(ctx);
+buttondig.setText("Dig block");
+buttondig.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+Turtle.dig();
+}
+}));
+menuLayout.addView(buttondig);
+var buttonUp = new android.widget.Button(ctx);
+buttonUp.setText("Move up");
+buttonUp.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+Turtle.Up();
+}
+}));
+menuLayout.addView(buttonUp);
+var buttondown = new android.widget.Button(ctx);
+buttondown.setText("Move down");
+buttondown.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+Turtle.Down();
+}
+}));
+menuLayout.addView(buttondown);
+var buttonleft = new android.widget.Button(ctx);
+buttonleft.setText("Turn left");
+buttonleft.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+Turtle.turnLeft();
+}
+}));
+menuLayout.addView(buttonleft);
+var buttonright = new android.widget.Button(ctx);
+buttonright.setText("Turn right");
+buttonright.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+Turtle.turnRight();
+}
+}));
+menuLayout.addView(buttonright);
+var buttonfor = new android.widget.Button(ctx);
+buttonfor.setText("Move forward");
+buttonfor.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+Turtle.Forward();
+}
+}));
+menuLayout.addView(buttonfor);
+} 
+menu = new android.widget.PopupWindow(menuLayout1, ctx.getWindowManager()
+.getDefaultDisplay()
+.getWidth() / 4, ctx.getWindowManager()
+.getDefaultDisplay()
+.getHeight());
+menu.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK));
+menu.showAtLocation(ctx.getWindow()
+.getDecorView(), android.view.Gravity.RIGHT | android.view.Gravity.TOP, 0, 0);
+}
+catch (error)
+{
+print("An error occured: " + error);
+}
+}
+}));
+}
+
+function mainMenu2(sub)
+{
+print(sub);
+var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
+ctx.runOnUiThread(new java.lang.Runnable(
+{
+run: function ()
+{
+try
+{
+var menuLayout = new android.widget.LinearLayout(ctx);
+var menuScroll = new android.widget.ScrollView(ctx);
+var menuLayout1 = new android.widget.LinearLayout(ctx);
+menuLayout.setOrientation(1);
+menuLayout1.setOrientation(1);
+menuScroll.addView(menuLayout);
+menuLayout1.addView(menuScroll);
+var button = new android.widget.Button(ctx);
+button.setText("Close");
+button.setOnClickListener(new android.view.View.OnClickListener(
+{
+onClick: function (viewarg)
+{
+if (menu != null)
+{
+menu.dismiss();
+menu = null;
+if (sub != 'main')
+{mainMenu2("main")}
+}
+}
+}));
+menuLayout.addView(button);
+var al = new Array();
+al = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+if (sub == 'main')
+{
+for (var i = 0; i < 27; i++)
+{
+if (al[i] != undefined)
+{
+eval("var buttonalph" + al[i] + " = new android.widget.Button(ctx)");
+eval("buttonalph" + al[i] + ".setText('" + al[i] + "')");
+eval("buttonalph" + al[i] + ".setOnClickListener(new android.view.View.OnClickListener({onClick: function (viewarg){ menu.dismiss();menu = null;mainMenu2(" + i +
+")}}));menuLayout.addView(buttonalph" + al[i] + ");");
+}
+}
+}
+else
+{
+for (var i = 1; i < 4096; i++)
+{
+name = Item.getName(i, 0, true);
+if (name != "" && name != "tile." && name != "item." && name != null)
+{
+name = Item.getName(i, 0, true)
+.replace("item.", "")
+.replace("tile.", "")
+.replace(".", " ")
+.first();
+if (name.charAt(0) == al[sub])
+{
+eval("var button" + i + " = new android.widget.Button(ctx)");
+eval("button" + i + ".setText('" + name + "')");
+eval("button" + i + ".setOnClickListener(new android.view.View.OnClickListener({onClick: function (viewarg) { Player.addItemInventory(" +
+i + ",64,0); }}));menuLayout.addView(button" + i + ");");
+}
+}
+}
+}
+menu = new android.widget.PopupWindow(menuLayout1, ctx.getWindowManager()
+.getDefaultDisplay()
+.getWidth() / 4, ctx.getWindowManager()
+.getDefaultDisplay()
+.getHeight());
+menu.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK));
+menu.showAtLocation(ctx.getWindow()
+.getDecorView(), android.view.Gravity.RIGHT | android.view.Gravity.TOP, 0, 0);
+}
+catch (error)
+{
+print("An error occured: " + error);
+}
+}
+}));
+}
+String.prototype.first = function ()
+{
+return this.charAt(0)
+.toUpperCase() + this.slice(1);
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function ccleaveGame()
+{
+var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
+ctx.runOnUiThread(new java.lang.Runnable(
+{
+run: function ()
+{
+if (GUI != null)
+{
+GUI.dismiss();
+GUI = null;
+}
+if (menu != null)
+{
+menu.dismiss();
+menu = null;
+}
+}
+}));
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function loadstate()
+{
+var dir = new java.io.File(android.os.Environment.getExternalStorageDirectory()
+.getPath() + "/games/com.mojang/minecraftWorlds/" + Level.getWorldDir() + "/ComputerCraft/state/");
+dir.mkdirs();
+var file = new java.io.File(android.os.Environment.getExternalStorageDirectory()
+.getPath() + "/games/com.mojang/minecraftWorlds/" + Level.getWorldDir() + "/ComputerCraft/state/state.dat");
+var scanner = new java.util.Scanner(file);
+var toload = scanner.next();
+var toloada = (toload + "Xr");
+toload = encrypt(toloada, "dec");
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+function savestate()
+{
+var state = [ccturtc, ccturtx.join("ð"), ccturty.join("ð"), ccturtz.join("ð")];
+var tosave = state.join("ß");
+tosave = encrypt(tosave, "enc");
+var dir = new java.io.File(android.os.Environment.getExternalStorageDirectory()
+.getPath() + "/games/com.mojang/minecraftWorlds/" + Level.getWorldDir() + "/ComputerCraft/state/");
+dir.mkdirs();
+file = new java.io.File(android.os.Environment.getExternalStorageDirectory()
+.getPath() + "/games/com.mojang/minecraftWorlds/" + Level.getWorldDir() + "/ComputerCraft/state/state.dat");
+file.delete();
+savewrite = new java.io.PrintWriter(file);
+savewrite.print(tosave);
+savewrite.close();
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+/*====================*/
+/*======Function======*/
+/*====================*/
+function random(min, max)
+{
+return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+/*====================*/
+/*======Function======*/
+/*====================*/
+
+/*====================*/
+/*======Function======*/
+/*====================*/
+function addtoturtinv(x, y, z, easteregg, item, count, data)
+{
+if (ccturt1[ccturtc] == item || ccturt1[ccturtc] == 0)
+{
+if (ccturt1d[ccturtc] == data || ccturt1d[ccturtc] > -1)
+{
+if (ccturt1c[ccturtc] + count < 65)
+{
+ccturt1[ccturtc] = item;
+ccturt1d[ccturtc] = data;
+ccturt1c[ccturtc] = ccturt1c + count
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+if (ccturt2[ccturtc] == item || ccturt2[ccturtc] == 0)
+{
+if (ccturt2d[ccturtc] == data || ccturt2d[ccturtc] > -1)
+{
+if (ccturt2c[ccturtc] - (-count) < 65)
+{
+ccturt2[ccturtc] = item;
+ccturt2d[ccturtc] = data;
+ccturt2c[ccturtc] = ccturt1c - (-count);
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+if (ccturt3[ccturtc] == item || ccturt3[ccturtc] == 0)
+{
+if (ccturt3d[ccturtc] == data || ccturt3d[ccturtc] > -1)
+{
+if (ccturt3c[ccturtc] - (-count) < 65)
+{
+ccturt3[ccturtc] = item;
+ccturt3d[ccturtc] = data;
+ccturt3c[ccturtc] = ccturt1c - (-count);
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+if (ccturt4[ccturtc] == item || ccturt4[ccturtc] == 0)
+{
+if (ccturt4d[ccturtc] == data || ccturt4d[ccturtc] > -1)
+{
+if (ccturt4c[ccturtc] - (-count) < 65)
+{
+ccturt4[ccturtc] = item;
+ccturt4d[ccturtc] = data;
+ccturt4c[ccturtc] = ccturt1c - (-count);
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+if (ccturt5[ccturtc] == item || ccturt5[ccturtc] == 0)
+{
+if (ccturt5d[ccturtc] == data || ccturt5d[ccturtc] > -1)
+{
+if (ccturt5c[ccturtc] - (-count) < 65)
+{
+ccturt5[ccturtc] = item;
+ccturt5d[ccturtc] = data;
+ccturt5c[ccturtc] = ccturt1c - (-count);
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+else
+{
+Level.dropItem(x, y, z, 1, item, count, data);
+}
+}
+}
+}
+}
+}
+var addons = {
+reload: function () {},
+calladdonfunc: function (func) {}
+};
+
+
+
+
+//API
+//Creecoder by Creeplays
+function encrypt(b_x, b_n)
+{
+var b_alf =
+'АжЩЮюУеvИ5ЭQDIAðПC3эСiRХгTlß4HЫнaШЯаqЗлKя2m6kзДкJYЧu18MgpZЦтБР7мбV0tьКоОLBЛ9ceфhёPМsnыNyшФщЬXrSГEусWbцdдfЖВFjпGЕвoхТUwчиНOxрz "@$&№,.;:?!|/\~*+-)(}{<>]#%&^=';
+var b_result = '';
+if (b_n == "enc")
+{
+for (i = 0; i < b_x.length; i++)
+{
+b_pos = b_alf.lastIndexOf(b_x.charAt(i));
+b_char1 = b_alf.charAt(b_pos - 2);
+b_char2 = b_alf.charAt(b_pos - 1);
+b_result = b_result + b_char1 + b_char2;
+}
+}
+if (b_n == "dec")
+{
+for (i = 0; i < b_x.length; i = i + 2)
+{
+b_pos = b_alf.indexOf(b_x.charAt(i));
+b_result = b_result + b_alf.charAt(b_pos + 2);
+}
+}
+return b_result;
+}
+/*==========[FileLib by RusJJ v1.31]==========*/
+/*
+Included functions
+
+file.select(dir, fileName); 
+file.exist(selectedFile); 
+file.create(selectedFile); 
+file.del(selectedFile);
+file.read(selectedFile); 
+file.readLine(selectedFile, line); 
+file.readKey(selectedFile, key, keySeparator);
+file.write(selectedFile, text);
+file.rewrite(selectedFile, text);
+file.writeKey(selectedFile, key, keyText, keySeparator);
+file.mPlay(musicPath);
+file.mStop(musicPath);
+*/
+var sdcard = android.os.Environment.getExternalStorageDirectory(),
+File = java.io.File,
+FileReader = java.io.FileReader,
+BufferedReader = java.io.BufferedReader,
+FOS = java.io.FileOutputStream,
+String = java.lang.String,
+StringBuilder = java.lang.StringBuilder,
+MediaPlayer = android.media.MediaPlayer(),
+file = {
+select: function (a, b)
+{
+return new File(a, b);
+},
+exists: function (a)
+{
+return a.exists();
+},
+create: function (a)
+{
+a.createNewFile();
+return a;
+},
+del: function (a)
+{
+a["delete"]();
+},
+read: function (a)
+{
+a = new BufferedReader(new FileReader(a));
+for (var b = new StringBuilder, c; null != (c = a.readLine());)
+{
+b.append(c), b.append("\n");
+}
+return b.toString();
+},
+readLine: function (a, b)
+{
+return (new file.read(a))
+.split("\n")[b - 1];
+},
+readKey: function (a, b, c)
+{
+for (a = (new file.read(a))
+.split("\n"); 0 < a.length;)
+{
+return c = a[0].split(c), c[0] == b ? c[1] : "[Unknown]";
+}
+},
+write: function (a, b)
+{
+file.rewrite(a, new file.read(a) + b);
+},
+rewrite: function (a, b)
+{
+(new FOS(a))
+.write((new String(b))
+.getBytes());
+},
+writeKey: function (a, b, c, e)
+{
+for (var d = 0, g = new file.read(a), h = g.split("\n"), f = 0; f < h.length; f++)
+{
+if (h[f].split(e)[0] == b)
+{
+d = g.split(b + e + new file.readKey(a, b));
+file.rewrite(a, d[0] + b + e + c + d[1]);
+d = 1;
+break;
+}
+}
+d || file.write(a, b + e + c);
+},
+mPlay: function (a)
+{
+MediaPlayer.setDataSource(a);
+MediaPlayer.prepare();
+MediaPlayer.start();
+},
+mStop: function ()
+{
+MediaPlayer.reset();
+}
+};
+/*==========[FileLib by RusJJ v1.31]==========*/
+
+//timerlib by 500ise
+//timers are stored as [id, ticksRemaining, functionPointer, repeating
+//(-1 for no repeating, ticks for repeating)] inside the following array.
+var time_timers = [];
+var time_nextId = 0;
+
+//timerlib_setTimeout(func, ticks):
+//after the specified number of in-game ticks, run the function.
+//one tick is equal to 1/20th of a second.
+//this is different from browser JavaScript, which takes in milliseconds instead.
+//returns a timer ID you can use to cancel the timer.
+
+function setTimeout(func, ticks) {
+var id = time_nextId++;
+time_timers.push([id, ticks, func, -1]);
+return id;
+}
+
+function setInterval(func, ticks) {
+var id = time_nextId++;
+time_timers.push([id, ticks, func, ticks]);
+return id;
+}
+
+//clear a timeout that was previously set with setTimeout.
+//pass in the returned ID.
+function clearTimeout(id) {
+for (var i = time_timers.length - 1; i >= 0; --i) {
+var t = time_timers[i];
+if (t[0] == id) {
+time_timers.splice(i, 1);
+break;
+}
+}
+}
+
+function clearInterval(id) {
+clearTimeout(id);
+}
+
+function time_runTimers() {
+for (var i = time_timers.length - 1; i >= 0; --i) {
+var t = time_timers[i];
+t[1]--;
+if (t[1] == 0) {
+t[2]();
+if (t[3] == -1) {
+time_timers.splice(i, 1);
+} else {
+t[1] = t[3];
+}
+}
+}
+}
+
+//end copy and paste here
+function dip2px(ctx, dips){
+    return Math.ceil(dips * ctx.getResources().getDisplayMetrics().density);
+}
