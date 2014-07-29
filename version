@@ -2,5 +2,5 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties version="1.0">  
   <entry key = "Minecraft 1.6.4">0.3.2|bugfix|false|dropbox.164?update032.jar</entry>
-  <entry key = "Minecraft PE">1.0|release|Test\nrealese\nof\nsecret\nmod|github.pe?update10.jar</entry>
+  <entry key = "Minecraft PE">1.0|release|Test\eol\realese\eol\of\eol\secret\eol\mod|github.pe?update10.jar</entry>
 </properties>
